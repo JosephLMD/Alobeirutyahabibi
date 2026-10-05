@@ -226,6 +226,112 @@
 })();
 </script>
 
+<script>
+/* LUPA · toca una foto y se abre en grande con su descripción.
+
+   No hay que marcar nada en el HTML: el script recorre las fotos de
+   platos, de la carta y de las galerías, y saca el título y el texto
+   de lo que ya está escrito al lado de cada una. Así no hay dos
+   fuentes de verdad que se puedan desincronizar. */
+(function(){
+  var fotos = [].slice.call(document.querySelectorAll(
+    '.plato img, .item img, .galeria img'));
+  if(!fotos.length) return;
+
+  /* de dónde sale el texto de cada foto, según dónde viva */
+  function datos(img){
+    var p;
+    if((p = img.closest('.plato')))
+      return {t:(p.querySelector('h3')||{}).textContent || img.alt,
+              d:(p.querySelector('p')||{}).textContent || ''};
+    if((p = img.closest('.item')))
+      return {t:(p.querySelector('b')||{}).textContent || img.alt,
+              d:(p.querySelector('small')||{}).textContent || ''};
+    if((p = img.closest('figure')))
+      return {t:(p.querySelector('figcaption')||{}).textContent || img.alt,
+              d:img.alt};
+    return {t:img.alt, d:''};
+  }
+
+  var caja = document.createElement('div');
+  caja.className = 'lupa';
+  caja.setAttribute('aria-hidden','true');
+  caja.setAttribute('role','dialog');
+  caja.setAttribute('aria-modal','true');
+  caja.innerHTML =
+    '<button class="lupa-x" aria-label="Cerrar">&times;</button>' +
+    '<button class="lupa-n lupa-ant" aria-label="Foto anterior">&#8249;</button>' +
+    '<button class="lupa-n lupa-sig" aria-label="Foto siguiente">&#8250;</button>' +
+    '<figure><img alt=""><figcaption><b></b><span></span></figcaption></figure>' +
+    '<p class="lupa-cuenta"></p>';
+  document.body.appendChild(caja);
+
+  var gran = caja.querySelector('img'),
+      tit  = caja.querySelector('b'),
+      des  = caja.querySelector('span'),
+      cnt  = caja.querySelector('.lupa-cuenta'),
+      i    = 0, antes = null;
+
+  function pintar(n){
+    i = (n + fotos.length) % fotos.length;
+    var f = fotos[i], d = datos(f);
+    gran.src = f.currentSrc || f.src;
+    gran.alt = f.alt;
+    tit.textContent = d.t;
+    des.textContent = d.d;
+    cnt.textContent = (i+1) + ' de ' + fotos.length + ' · usa las flechas del teclado';
+  }
+  function abrir(n){
+    antes = document.activeElement;
+    pintar(n);
+    caja.classList.add('abierta');
+    caja.setAttribute('aria-hidden','false');
+    document.body.classList.add('sin-scroll');
+    caja.querySelector('.lupa-x').focus();
+  }
+  function cerrar(){
+    caja.classList.remove('abierta');
+    caja.setAttribute('aria-hidden','true');
+    document.body.classList.remove('sin-scroll');
+    if(antes && antes.focus) antes.focus();
+  }
+
+  fotos.forEach(function(f, n){
+    f.setAttribute('data-lupa','');
+    /* que también se pueda con teclado, no solo con el dedo */
+    f.setAttribute('tabindex','0');
+    f.setAttribute('role','button');
+    f.setAttribute('aria-label','Ver "' + (f.alt || 'la foto') + '" en grande');
+    f.addEventListener('click', function(){ abrir(n); });
+    f.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); abrir(n); }
+    });
+  });
+
+  caja.querySelector('.lupa-x').addEventListener('click', cerrar);
+  caja.querySelector('.lupa-ant').addEventListener('click', function(){ pintar(i-1); });
+  caja.querySelector('.lupa-sig').addEventListener('click', function(){ pintar(i+1); });
+  /* tocar el fondo cierra; tocar la foto o el texto, no */
+  caja.addEventListener('click', function(e){ if(e.target === caja) cerrar(); });
+  document.addEventListener('keydown', function(e){
+    if(!caja.classList.contains('abierta')) return;
+    if(e.key === 'Escape')     cerrar();
+    if(e.key === 'ArrowLeft')  pintar(i-1);
+    if(e.key === 'ArrowRight') pintar(i+1);
+  });
+
+  /* deslizar con el dedo, que en celular es lo natural */
+  var x0 = null;
+  caja.addEventListener('touchstart', function(e){ x0 = e.touches[0].clientX; }, {passive:true});
+  caja.addEventListener('touchend', function(e){
+    if(x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if(Math.abs(dx) > 55) pintar(dx < 0 ? i+1 : i-1);
+    x0 = null;
+  }, {passive:true});
+})();
+</script>
+
 </body>
 </html>
 

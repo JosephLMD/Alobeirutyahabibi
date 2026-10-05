@@ -1,0 +1,12 @@
+<!DOCTYPE html><meta charset="utf-8">
+<title>Vista escritorio</title>
+<style>
+ /* Banco de pruebas: el panel de vista previa es angosto, así que aquí
+    metemos la página en un marco de 1280px y la encogemos para verla
+    completa. No se publica: empieza por guion bajo. */
+ body{margin:0;background:#333;}
+ .marco{width:1280px;height:2400px;border:0;transform:scale(.44);
+        transform-origin:top left;}
+ .caja{width:563px;height:1056px;overflow:hidden;}
+</style>
+<div class="caja"><iframe class="marco" src="index.html"></iframe></div>

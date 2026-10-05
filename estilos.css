@@ -295,12 +295,23 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
 .hero .btn.linea{color:#FFE2A6;border-color:rgba(255,226,166,.55);}
 .hero .btn.linea:hover{background:rgba(255,226,166,.14);color:#fff;}
 @media(min-width:900px){
-  .hero-in{grid-template-columns:1.05fr 1fr;}
-  .hero-foto{order:2;height:100%;}
-  .hero-foto img{height:100%;aspect-ratio:auto;min-height:560px;}
-  .hero-foto::after{top:0;bottom:0;left:-1px;right:auto;width:110px;height:auto;
+  /* stretch, no center: la columna de la foto tiene que estirarse para
+     que el height:100% de la imagen tenga contra qué medirse */
+  /* la foto se va hasta el borde derecho de la pantalla y el texto se
+     alinea con el resto del sitio, como si el contenedor siguiera ahí */
+  .hero-in{max-width:none;grid-template-columns:1fr 1fr;align-items:stretch;}
+  .hero-foto{order:2;}
+  /* el object-fit es obligatorio aquí: sin él la foto se estira y Zamira
+     sale deformada, que fue justo lo que pasó la primera vez */
+  .hero-foto img{height:100%;width:100%;object-fit:cover;object-position:62% 45%;
+    min-height:580px;}
+  .hero-foto::after{top:0;bottom:0;left:-1px;right:auto;width:120px;height:auto;
     background:linear-gradient(to right,var(--cafe),rgba(78,46,26,0));}
-  .hero-txt{padding:64px clamp(30px,4vw,56px) 64px var(--gutter);}
+  .hero-txt{display:flex;flex-direction:column;justify-content:center;
+    align-items:flex-start;        /* si no, la pastilla se estira de lado a lado */
+    padding:70px clamp(30px,4vw,56px) 70px
+            max(var(--gutter), calc((100vw - 1140px)/2 + var(--gutter)));}
+  .hero-txt .lead{max-width:34em;}
 }
 
 /* ── adorno antes del título ──────────────────────────────────── */
@@ -331,7 +342,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
 .item img{width:74px;height:74px;border-radius:10px;object-fit:cover;flex:0 0 auto;
   margin-right:14px;}
 .item>div:first-child{display:flex;align-items:center;min-width:0;}
-@media(min-width:620px){.item img{width:92px;height:92px;}}
+@media(min-width:620px){.item img{width:96px;height:96px;}}
+@media(min-width:900px){.item img{width:116px;height:116px;margin-right:18px;}
+  .item{padding:14px 20px;}}
 
 /* ── cinta de sabores ─────────────────────────────────────────── */
 .cinta{background:var(--cafe);color:#F3E4D2;padding:16px 0;overflow:hidden;
@@ -339,3 +352,43 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
 .cinta div{display:flex;gap:30px;white-space:nowrap;justify-content:center;flex-wrap:wrap;
   padding:0 var(--gutter);}
 .cinta i{font-style:normal;color:var(--oro);}
+
+/* ═══════════════════════════════════════════════════════════════
+   LUPA · la foto en grande al tocarla
+
+   En catering la foto ES el producto. Si alguien toca el quipe es
+   porque quiere verlo bien antes de pedir cien. Se abre en grande,
+   con el nombre y la descripción debajo, y se pasa de uno a otro con
+   las flechas sin tener que cerrar y volver a abrir.
+   ═══════════════════════════════════════════════════════════════ */
+[data-lupa]{cursor:zoom-in;}
+.lupa{position:fixed;inset:0;z-index:200;display:none;
+  background:rgba(20,11,5,.975);padding:clamp(14px,3vw,34px);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;}
+.lupa.abierta{display:flex;}
+.lupa figure{margin:0;max-width:min(980px,100%);max-height:100%;display:flex;
+  flex-direction:column;align-items:center;gap:16px;}
+.lupa img{max-width:100%;max-height:62vh;width:auto;border-radius:14px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);background:var(--cafe);}
+.lupa figcaption{text-align:center;max-width:620px;
+  padding-bottom:calc(8px + env(safe-area-inset-bottom));}
+.lupa figcaption b{display:block;font-family:var(--serif);font-size:clamp(21px,3.4vw,28px);
+  color:#FFF4E2;margin-bottom:6px;}
+.lupa figcaption span{display:block;font-size:15.5px;color:#D6C3AC;line-height:1.6;}
+.lupa figcaption i{display:block;font-style:normal;font-size:13px;color:#9D8571;}
+.lupa-x,.lupa-n{position:absolute;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);
+  color:#FFF4E2;width:50px;height:50px;border-radius:999px;cursor:pointer;font-size:26px;
+  line-height:1;display:flex;align-items:center;justify-content:center;
+  -webkit-tap-highlight-color:transparent;transition:background .18s;}
+.lupa-x:hover,.lupa-n:hover{background:rgba(255,255,255,.24);}
+.lupa-x{top:clamp(12px,2.6vw,26px);right:clamp(12px,2.6vw,26px);font-size:30px;}
+.lupa-n{top:50%;transform:translateY(-50%);font-size:32px;}
+.lupa-ant{left:clamp(8px,2vw,24px);}
+.lupa-sig{right:clamp(8px,2vw,24px);}
+.lupa-cuenta{position:absolute;bottom:clamp(10px,2vw,22px);left:0;right:0;text-align:center;
+  font-size:13px;color:#9D8571;letter-spacing:.04em;}
+@media(max-width:620px){
+  .lupa-n{top:auto;bottom:calc(18px + env(safe-area-inset-bottom));transform:none;}
+  .lupa-cuenta{display:none;}
+}
