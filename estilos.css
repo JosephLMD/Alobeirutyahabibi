@@ -1,0 +1,341 @@
+/* ═══════════════════════════════════════════════════════════════
+   Aló Beirut Yahabibi · hoja de estilos única para las seis páginas
+
+   DOS COSAS QUE MANDAN AQUÍ
+
+   1. El teléfono es la vista principal, no la de escritorio. La mayoría
+      va a llegar desde el enlace de la biografía de Instagram. Por eso
+      el margen lateral nunca baja de 22px, los toques nunca miden menos
+      de 48px y el menú de tres rayas existe de verdad.
+
+   2. Cero fuentes externas y cero librerías. El sitio vive en GitHub
+      Pages sin costo y tiene que cargar rápido en datos móviles, que es
+      como lo van a abrir en la mitad de los casos.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root{
+  /* la paleta sale del logo y de la foto de Zamira */
+  --crema:#FBF6EC; --crema-2:#F4EADA; --papel:#FFFFFF;
+  --verde:#1F7A4C; --verde-o:#155C39; --verde-cl:#E8F2EB;
+  --cafe:#4E2E1A; --cafe-cl:#8A6A52;
+  --rojo:#C9372C; --oro:#E8A91D; --azul:#2C5F94;
+  --tinta:#2A2017; --gris:#6B5C4D; --linea:#E3D8C6;
+  --sombra:0 6px 28px rgba(78,46,26,.10);
+  --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,'Times New Roman',serif;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  /* nunca menos de 22px de aire a los lados en celular */
+  --gutter:clamp(22px,5vw,40px);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{margin:0;background:var(--crema);color:var(--tinta);font-family:var(--sans);
+  font-size:17px;line-height:1.68;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body.sin-scroll{overflow:hidden;}
+img{max-width:100%;height:auto;display:block;}
+a{color:var(--verde-o);}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.16;letter-spacing:-.01em;margin:0 0 14px;}
+h1{font-size:clamp(30px,6.2vw,54px);}
+h2{font-size:clamp(25px,4.8vw,38px);}
+h3{font-size:clamp(19px,3.4vw,23px);}
+p{margin:0 0 16px;}
+.wrap{max-width:1140px;margin:0 auto;padding:0 var(--gutter);}
+.estrecho{max-width:760px;margin:0 auto;}
+section{padding:clamp(50px,9vw,96px) 0;}
+.centro{text-align:center;}
+.lead{font-size:clamp(16.5px,2.4vw,20px);color:var(--gris);max-width:660px;}
+.centro .lead{margin-left:auto;margin-right:auto;}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+/* ── barra y menú de tres rayas ───────────────────────────────── */
+.barra{position:sticky;top:0;z-index:60;background:rgba(251,246,236,.97);
+  -webkit-backdrop-filter:saturate(180%) blur(10px);backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid var(--linea);}
+.barra-in{display:flex;align-items:center;justify-content:space-between;gap:14px;
+  max-width:1140px;margin:0 auto;padding:9px var(--gutter);}
+.marca{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--cafe);min-width:0;}
+.marca img{width:44px;height:auto;flex:0 0 auto;}
+.marca b{font-family:var(--serif);font-size:17px;line-height:1.12;display:block;}
+.marca i{font-style:normal;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--verde);display:block;}
+.nav{display:none;align-items:center;gap:24px;}
+.nav a{color:var(--gris);text-decoration:none;font-size:15px;font-weight:500;padding:6px 0;}
+.nav a:hover,.nav a[aria-current="page"]{color:var(--verde-o);}
+.nav a[aria-current="page"]{border-bottom:2px solid var(--verde);}
+.rayas{display:flex;flex-direction:column;justify-content:center;gap:5px;width:48px;height:48px;
+  background:transparent;border:0;cursor:pointer;padding:12px 10px;-webkit-tap-highlight-color:transparent;}
+.rayas span{display:block;height:2.5px;border-radius:2px;background:var(--cafe);
+  transition:transform .26s,opacity .18s;}
+.rayas[aria-expanded="true"] span:nth-child(1){transform:translateY(7.5px) rotate(45deg);}
+.rayas[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.rayas[aria-expanded="true"] span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg);}
+@media(min-width:900px){ .nav{display:flex;} .rayas{display:none;} }
+
+/* panel lateral */
+.velo{position:fixed;inset:0;background:rgba(42,32,23,.5);opacity:0;visibility:hidden;
+  transition:opacity .26s,visibility .26s;z-index:70;}
+.velo.abierto{opacity:1;visibility:visible;}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(84vw,340px);background:var(--crema);
+  z-index:80;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;padding:18px 24px calc(24px + env(safe-area-inset-bottom));
+  box-shadow:-10px 0 40px rgba(0,0,0,.18);overflow-y:auto;}
+.panel.abierto{transform:translateX(0);}
+.panel-top{display:flex;justify-content:flex-end;margin-bottom:10px;}
+.panel nav{display:flex;flex-direction:column;}
+.panel nav a{color:var(--tinta);text-decoration:none;font-family:var(--serif);font-size:21px;
+  padding:15px 0;border-bottom:1px solid var(--linea);}
+.panel nav a[aria-current="page"]{color:var(--verde-o);}
+.panel .btn{margin-top:22px;}
+.panel-tel{margin-top:18px;font-size:14.5px;color:var(--gris);}
+@media(min-width:900px){ .velo,.panel{display:none;} }
+
+/* ── botones ──────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:52px;
+  padding:14px 26px;border-radius:999px;border:0;cursor:pointer;font-family:var(--sans);
+  font-size:16px;font-weight:600;text-decoration:none;background:var(--verde);color:#fff;
+  transition:transform .16s,background .2s;-webkit-tap-highlight-color:transparent;}
+.btn:hover{background:var(--verde-o);transform:translateY(-2px);color:#fff;}
+.btn.wa{background:#25D366;color:#0B3D22;}
+.btn.wa:hover{background:#1EBE5A;color:#07301A;}
+.btn.linea{background:transparent;color:var(--verde-o);border:1.5px solid var(--verde);}
+.btn.linea:hover{background:var(--verde-cl);}
+.btn svg{width:20px;height:20px;flex:0 0 auto;}
+.btn.ancho{display:flex;width:100%;}
+.acciones{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;}
+
+/* ── portada ──────────────────────────────────────────────────── */
+.portada{background:var(--crema-2);}
+.portada-img{width:100%;aspect-ratio:1600/666;object-fit:cover;}
+/* OJO: el padding va con los lados explícitos. Antes decía `0` en los
+   lados y pisaba el `padding:0 var(--gutter)` que trae .wrap, así que el
+   texto de la portada quedaba pegado al borde en celular. */
+.portada-txt{padding:clamp(26px,6vw,52px) var(--gutter) clamp(38px,7vw,70px);}
+.sello{display:inline-flex;align-items:center;gap:8px;background:var(--verde-cl);color:var(--verde-o);
+  font-size:13px;font-weight:600;letter-spacing:.03em;padding:7px 15px;border-radius:999px;margin-bottom:14px;}
+.verde{color:var(--verde-o);}
+.bajo-cta{font-size:14px;color:var(--gris);margin-top:14px;}
+
+/* cabecera de página interior */
+.cabe{background:var(--crema-2);border-bottom:1px solid var(--linea);
+  padding:clamp(28px,6vw,54px) 0 clamp(30px,6vw,56px);}
+.miga{font-size:13.5px;color:var(--gris);margin-bottom:12px;}
+.miga a{color:var(--gris);}
+
+/* ── cifras ───────────────────────────────────────────────────── */
+.cifras{background:var(--verde);color:#fff;padding:28px 0;}
+.cifras-g{display:grid;grid-template-columns:repeat(2,1fr);gap:20px 12px;text-align:center;}
+@media(min-width:760px){.cifras-g{grid-template-columns:repeat(4,1fr);}}
+.cifras b{display:block;font-family:var(--serif);font-size:clamp(25px,4.6vw,36px);line-height:1;}
+.cifras span{display:block;font-size:13px;opacity:.92;margin-top:5px;}
+
+/* ── rejillas y tarjetas ──────────────────────────────────────── */
+.rej{display:grid;gap:18px;grid-template-columns:1fr;}
+@media(min-width:620px){.rej.dos{grid-template-columns:1fr 1fr;}}
+@media(min-width:820px){.rej.tres{grid-template-columns:repeat(3,1fr);}}
+.plato{background:var(--papel);border-radius:14px;overflow:hidden;box-shadow:var(--sombra);
+  display:flex;flex-direction:column;}
+.plato img{width:100%;aspect-ratio:4/3;object-fit:cover;}
+.plato .cuerpo{padding:17px 20px 21px;}
+.plato h3{margin-bottom:6px;}
+.plato p{font-size:15.5px;color:var(--gris);margin:0;}
+
+/* ── fichas de enlace ─────────────────────────────────────────── */
+.fichas{display:grid;gap:14px;grid-template-columns:1fr;}
+@media(min-width:620px){.fichas{grid-template-columns:1fr 1fr;}}
+@media(min-width:980px){.fichas.tres{grid-template-columns:repeat(3,1fr);}}
+.fichas a{display:block;background:var(--papel);border:1px solid var(--linea);border-radius:13px;
+  padding:19px 21px;text-decoration:none;color:var(--tinta);transition:border-color .2s,transform .16s;}
+.fichas a:hover{border-color:var(--verde);transform:translateY(-3px);}
+.fichas h3{font-size:19px;margin-bottom:5px;}
+.fichas p{font-size:14.5px;color:var(--gris);margin:0;}
+
+/* ── dos columnas texto + foto ────────────────────────────────── */
+.duo{display:grid;gap:28px;grid-template-columns:1fr;align-items:center;}
+@media(min-width:880px){.duo{grid-template-columns:1fr 1fr;gap:50px;}}
+.duo img{border-radius:16px;box-shadow:var(--sombra);}
+.cita{font-family:var(--serif);font-size:clamp(19px,3vw,26px);font-style:italic;color:var(--cafe);
+  line-height:1.45;border-left:3px solid var(--oro);padding-left:18px;margin:0 0 18px;}
+
+/* ── galería ──────────────────────────────────────────────────── */
+.galeria{display:grid;gap:12px;grid-template-columns:repeat(2,1fr);}
+@media(min-width:760px){.galeria{grid-template-columns:repeat(3,1fr);}}
+@media(min-width:1040px){.galeria{grid-template-columns:repeat(4,1fr);}}
+.galeria figure{margin:0;border-radius:12px;overflow:hidden;background:var(--papel);box-shadow:var(--sombra);}
+.galeria img{width:100%;aspect-ratio:1/1;object-fit:cover;transition:transform .4s;}
+.galeria figure:hover img{transform:scale(1.05);}
+.galeria figcaption{padding:10px 12px 12px;font-size:13.5px;color:var(--gris);}
+
+/* ── menú (carta) ─────────────────────────────────────────────── */
+.carta{margin:0 0 38px;}
+.carta h3{border-bottom:2px solid var(--oro);padding-bottom:8px;margin-bottom:4px;}
+.item{display:flex;justify-content:space-between;gap:16px;align-items:baseline;
+  padding:14px 0;border-bottom:1px solid var(--linea);}
+.item b{font-weight:600;font-size:16.5px;display:block;}
+.item small{display:block;color:var(--gris);font-size:14.5px;font-weight:400;line-height:1.5;margin-top:3px;}
+.item .precio{font-family:var(--serif);font-size:17px;color:var(--verde-o);white-space:nowrap;font-weight:600;}
+
+/* ── cotizador ────────────────────────────────────────────────── */
+.cot{background:var(--cafe);color:#F6EEE4;}
+.cot h2,.cot h3{color:#fff;}
+.cot .lead{color:#DCCCBA;}
+.caja-cot{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);
+  border-radius:16px;padding:clamp(20px,4vw,34px);margin-top:26px;}
+.campo{margin-bottom:19px;}
+.campo label,.campo .et{display:block;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:#C9B49F;font-weight:600;margin-bottom:9px;}
+.opciones{display:flex;flex-wrap:wrap;gap:9px;}
+.opciones button{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);
+  color:#F6EEE4;padding:11px 17px;border-radius:999px;font-size:15px;cursor:pointer;
+  font-family:var(--sans);transition:all .18s;min-height:48px;}
+.opciones button:hover{border-color:#fff;}
+.opciones button[aria-pressed="true"]{background:var(--oro);border-color:var(--oro);
+  color:#3A2A10;font-weight:600;}
+.campo input[type="date"]{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);
+  color:#F6EEE4;padding:12px 16px;border-radius:10px;font-size:16px;font-family:var(--sans);
+  width:100%;max-width:260px;min-height:50px;}
+.vista{font-size:14.5px;color:#C9B49F;margin:0 0 18px;min-height:22px;}
+
+/* ── preguntas ────────────────────────────────────────────────── */
+.faq details{background:var(--papel);border:1px solid var(--linea);border-radius:12px;
+  padding:4px 20px;margin-bottom:11px;}
+.faq summary{cursor:pointer;padding:15px 0;font-weight:600;font-size:16.5px;list-style:none;
+  display:flex;justify-content:space-between;gap:14px;align-items:center;min-height:48px;}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary::after{content:'+';font-family:var(--serif);font-size:24px;color:var(--verde);
+  line-height:1;flex:0 0 auto;}
+.faq details[open] summary::after{content:'–';}
+.faq p{font-size:15.5px;color:var(--gris);margin:0 0 15px;}
+
+/* ── ciudades ─────────────────────────────────────────────────── */
+.pastillas{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0;}
+.centro .pastillas{justify-content:center;}
+.pastillas span{background:var(--papel);border:1px solid var(--linea);border-radius:999px;
+  padding:9px 18px;font-size:15px;font-weight:500;}
+
+/* ── pie ──────────────────────────────────────────────────────── */
+footer{background:var(--cafe);color:#D9C9B8;padding:50px 0 30px;font-size:15px;}
+footer h3{color:#fff;font-size:18px;}
+.pie-g{display:grid;gap:28px;grid-template-columns:1fr;}
+@media(min-width:760px){.pie-g{grid-template-columns:1.4fr 1fr 1fr;}}
+footer a{color:#F0E3D4;text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+footer ul{list-style:none;margin:0;padding:0;}
+footer li{margin-bottom:8px;}
+.legal{border-top:1px solid rgba(255,255,255,.14);margin-top:32px;padding-top:19px;font-size:13px;
+  color:#A99383;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;}
+
+/* ── botón flotante ───────────────────────────────────────────── */
+.flota{position:fixed;right:16px;bottom:16px;z-index:55;box-shadow:0 8px 26px rgba(0,0,0,.26);
+  padding-bottom:calc(14px + env(safe-area-inset-bottom));}
+@media(min-width:900px){.flota{right:26px;bottom:26px;}}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important;}
+  html{scroll-behavior:auto;}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CAPA 2 · SAZÓN
+
+   La queja fue justa: fondo plano con comida así es desperdiciarla.
+   Lo que entra aquí:
+
+   · un patrón de estrella de ocho puntas (rub el hizb, el que se ve
+     en el azulejo árabe) como textura de fondo, dibujado en SVG
+     dentro del propio CSS — cero peticiones al servidor, cero peso
+   · la portada ahora es la foto a pantalla, con el texto encima y
+     centrado, que es donde la comida se ve apetitosa de verdad
+   · hilos de oro en las tarjetas y adornos antes de cada título
+   ═══════════════════════════════════════════════════════════════ */
+
+:root{
+  --oro-2:#C9A227;
+  --crema:#FAF3E6; --crema-2:#F2E6D2;
+  /* estrella de ocho puntas: dos cuadrados, uno girado 45° */
+  --patron:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23B07A2E' stroke-width='1.1'%3E%3Crect x='10' y='10' width='28' height='28'/%3E%3Crect x='10' y='10' width='28' height='28' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
+  --patron-claro:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23E8C98A' stroke-width='1.1'%3E%3Crect x='10' y='10' width='28' height='28'/%3E%3Crect x='10' y='10' width='28' height='28' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
+}
+html{background:var(--crema);}
+/* el azulejo, detrás de todo, muy bajito para que no pelee con el texto */
+body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:var(--patron);background-size:48px 48px;opacity:.20;}
+
+/* secciones con su propio fondo: les ponemos el azulejo encima del color */
+.cot,footer{position:relative;}
+.cot::before,footer::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:var(--patron-claro);background-size:48px 48px;opacity:.09;}
+.cot>*,footer>*{position:relative;z-index:1;}
+.cifras{background-image:var(--patron-claro);background-size:48px 48px;
+  background-blend-mode:soft-light;}
+
+/* ── portada ──────────────────────────────────────────────────────
+   La foto de la portada es Zamira con su bandeja. Poner texto encima
+   le tapa la cara, que es justo lo que más vende en un catering de
+   familia. Así que la foto va entera y el texto va al lado, sobre
+   panel oscuro con el azulejo: queda cálido sin estorbarle a nadie.
+   ──────────────────────────────────────────────────────────────── */
+.hero{position:relative;background:var(--cafe);color:#F6E9D8;padding:0;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:var(--patron-claro);background-size:48px 48px;opacity:.10;}
+.hero-in{position:relative;z-index:1;display:grid;grid-template-columns:1fr;
+  max-width:1140px;margin:0 auto;align-items:center;}
+.hero-foto{position:relative;}
+/* en celular la foto va completa, sin recorte: el logo y el letrero
+   'hecho con amor' hacen parte de la foto y cortarlos sería una pena */
+.hero-foto img{width:100%;height:auto;}
+/* un degradado corto abajo para coser la foto con el panel */
+.hero-foto::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:90px;
+  background:linear-gradient(to top,var(--cafe),rgba(78,46,26,0));}
+.hero-txt{padding:clamp(26px,6vw,56px) var(--gutter) clamp(40px,8vw,64px);}
+.hero-txt h1{color:#FFF6E7;}
+.hero-txt .lead{color:#E4D2BC;}
+.hero-txt .verde{color:var(--oro);}
+.hero-txt .bajo-cta{color:#C2A98F;}
+.hero .sello{background:rgba(255,248,236,.14);color:#FFE2A6;
+  border:1px solid rgba(255,226,166,.38);}
+.hero .btn.linea{color:#FFE2A6;border-color:rgba(255,226,166,.55);}
+.hero .btn.linea:hover{background:rgba(255,226,166,.14);color:#fff;}
+@media(min-width:900px){
+  .hero-in{grid-template-columns:1.05fr 1fr;}
+  .hero-foto{order:2;height:100%;}
+  .hero-foto img{height:100%;aspect-ratio:auto;min-height:560px;}
+  .hero-foto::after{top:0;bottom:0;left:-1px;right:auto;width:110px;height:auto;
+    background:linear-gradient(to right,var(--cafe),rgba(78,46,26,0));}
+  .hero-txt{padding:64px clamp(30px,4vw,56px) 64px var(--gutter);}
+}
+
+/* ── adorno antes del título ──────────────────────────────────── */
+.orn{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 auto 16px;
+  max-width:190px;}
+.orn::before,.orn::after{content:'';flex:1;height:1px;
+  background:linear-gradient(to right,transparent,var(--oro-2));}
+.orn::after{background:linear-gradient(to left,transparent,var(--oro-2));}
+.orn span{width:11px;height:11px;background:var(--oro-2);flex:0 0 auto;
+  transform:rotate(45deg);box-shadow:0 0 0 3px var(--crema),0 0 0 4px rgba(201,162,39,.35);}
+
+/* ── tarjetas con hilo de oro ─────────────────────────────────── */
+.plato{border:1px solid var(--linea);}
+.plato::after{content:'';display:block;height:3px;
+  background:linear-gradient(to right,var(--oro-2),var(--oro),var(--oro-2));}
+.plato .cuerpo{flex:1;}
+.fichas a{background:linear-gradient(var(--papel),var(--papel)) padding-box;}
+.fichas a:hover{box-shadow:var(--sombra);}
+.duo img{border:4px solid var(--papel);outline:1px solid var(--linea);}
+.pastillas span{box-shadow:0 1px 0 var(--linea);}
+
+/* ── carta con foto en cada plato ─────────────────────────────── */
+.carta h3{display:flex;align-items:center;gap:10px;}
+.carta h3::after{content:'';flex:1;height:1px;background:var(--oro-2);opacity:.45;}
+.carta h3{border-bottom:0;padding-bottom:4px;}
+.item{background:var(--papel);border:1px solid var(--linea);border-radius:13px;
+  padding:12px 16px;margin-bottom:10px;align-items:center;box-shadow:0 1px 0 rgba(78,46,26,.04);}
+.item img{width:74px;height:74px;border-radius:10px;object-fit:cover;flex:0 0 auto;
+  margin-right:14px;}
+.item>div:first-child{display:flex;align-items:center;min-width:0;}
+@media(min-width:620px){.item img{width:92px;height:92px;}}
+
+/* ── cinta de sabores ─────────────────────────────────────────── */
+.cinta{background:var(--cafe);color:#F3E4D2;padding:16px 0;overflow:hidden;
+  font-family:var(--serif);font-size:clamp(15px,2.2vw,19px);}
+.cinta div{display:flex;gap:30px;white-space:nowrap;justify-content:center;flex-wrap:wrap;
+  padding:0 var(--gutter);}
+.cinta i{font-style:normal;color:var(--oro);}
